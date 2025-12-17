@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Data files (Exclude from Git)
+*.xlsx
+*.csv
+~$*
