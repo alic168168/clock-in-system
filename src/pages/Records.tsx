@@ -524,14 +524,15 @@ export default function Records() {
     // DEBUG ALERT
     useEffect(() => {
         const info = `
-        DEBUG MODE v2.0
+        DEBUG MODE v2.1
         User: ${user?.name} (${user?.id})
         Role: ${user?.role}
         Can View All: ${canViewAll}
         Visible Records: ${accessibleHistory.length}
         `;
-        // Only alert once per session/load ideally, but for now just alert
-        // setTimeout(() => alert(info), 1000); 
+        console.log(info);
+        // Force alert to ensure visibility
+        setTimeout(() => alert(info), 500);
     }, [user, canViewAll, accessibleHistory.length]);
 
     return (
