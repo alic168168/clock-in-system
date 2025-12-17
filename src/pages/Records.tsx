@@ -521,10 +521,28 @@ export default function Records() {
             String(user.storeId).includes(term);
     });
 
+    // DEBUG ALERT
+    useEffect(() => {
+        const info = `
+        DEBUG MODE v2.0
+        User: ${user?.name} (${user?.id})
+        Role: ${user?.role}
+        Can View All: ${canViewAll}
+        Visible Records: ${accessibleHistory.length}
+        `;
+        // Only alert once per session/load ideally, but for now just alert
+        // setTimeout(() => alert(info), 1000); 
+    }, [user, canViewAll, accessibleHistory.length]);
+
     return (
         <div className="space-y-6 pb-20">
-            {/* DEBUG PANEL */}
-            <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-xs font-mono text-red-800 break-all">
+            {/* DEBUG PANEL - FIXED POSITION TO AVOID CSS HIDDEN */}
+            <div className="fixed top-0 left-0 w-full bg-red-600 text-white z-[9999] p-2 text-center text-sm font-bold shadow-lg">
+                ⚠️ DEBUG MODE v2.0 - Role: {user?.role} | ViewAll: {canViewAll ? 'YES' : 'NO'} ⚠️
+            </div>
+
+            {/* Fallback Static Panel */}
+            <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-xs font-mono text-red-800 break-all mt-10">
                 <p><strong>DEBUG INFO (除錯用):</strong></p>
                 <p>User ID: {user?.id} | Role: {user?.role}</p>
                 <p>Permission [view_all_records]: {canViewAll ? 'YES (有權限)' : 'NO (無權限)'}</p>
