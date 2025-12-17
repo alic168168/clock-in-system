@@ -73,7 +73,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         initLiff();
     }, []);
 
-    const login = (userData: User | string) => {
+    const login = async (userData: User | string) => {
+        // Refresh permissions from cloud when logging in to ensure latest access rights
+        loadPermissions();
+
         if (typeof userData === 'string') {
             const foundUser = MOCK_USERS.find(u => u.id === userData);
             if (foundUser) {
