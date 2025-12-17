@@ -75,7 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = async (userData: User | string) => {
         // Refresh permissions from cloud when logging in to ensure latest access rights
-        loadPermissions();
+        // AWAIT this to prevent race condition (user entering with stale cache)
+        await loadPermissions();
 
         if (typeof userData === 'string') {
             const foundUser = MOCK_USERS.find(u => u.id === userData);

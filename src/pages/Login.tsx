@@ -43,9 +43,17 @@ export default function Login() {
         loadUsers();
     }, []);
 
-    const handleLogin = (user: any) => {
-        login(user);
-        navigate('/');
+    const [processingLogin, setProcessingLogin] = useState(false);
+
+    const handleLogin = async (user: any) => {
+        setProcessingLogin(true);
+        try {
+            await login(user);
+            navigate('/');
+        } catch (error) {
+            console.error("Login failed:", error);
+            setProcessingLogin(false);
+        }
     };
 
     return (
@@ -58,9 +66,10 @@ export default function Login() {
                     請選擇您的身分進行登入
                 </p>
 
-                {loading ? (
-                    <div className="flex justify-center py-8">
+                {loading || processingLogin ? (
+                    <div className="flex flex-col items-center justify-center py-8 space-y-3">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        {processingLogin && <p className="text-gray-400 text-sm">正在同步最新的權限設定...</p>}
                     </div>
                 ) : (
                     <div className="space-y-3">
