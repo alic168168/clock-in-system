@@ -34,16 +34,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loadPermissions();
     }, []);
 
-    const loadPermissions = async () => {
-        // 1. Try Local Storage
-        const saved = localStorage.getItem('settings_permissions');
-        if (saved) {
-            try {
-                setPermissionsMap(JSON.parse(saved));
-            } catch (e) { console.error("Parse perm error", e); }
+    const loadPermissions = async (forceFresh = false) => {
+        // 1. Try Local Storage (Skip if forcing fresh)
+        if (!forceFresh) {
+            const saved = localStorage.getItem('settings_permissions');
+            if (saved) {
+                try {
+                    setPermissionsMap(JSON.parse(saved));
+                } catch (e) { console.error("Parse perm error", e); }
+            }
+        } else {
+            // If forcing fresh, we specifically want to avoid stale data
+            // We could clear permissionsMap here to trigger a spinner if we had one,
+            // but for now let's just ensure we await the Cloud fetch.
+            // localStorage.removeItem('settings_permissions'); // Optional: clear cache to be safe
         }
 
-        // 2. Try Cloud (Background update)
+        // 2. Try Cloud (Background update or Awaited update)
         try {
             const cloudPerms = await api.getPermissions();
             if (cloudPerms && Object.keys(cloudPerms).length > 0) {
@@ -76,7 +83,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = async (userData: User | string) => {
         // Refresh permissions from cloud when logging in to ensure latest access rights
         // AWAIT this to prevent race condition (user entering with stale cache)
-        await loadPermissions();
+        // Pass true to FORCE fetch from cloud and ignore local cache
+        await loadPermissions(true);
 
         if (typeof userData === 'string') {
             const foundUser = MOCK_USERS.find(u => u.id === userData);
